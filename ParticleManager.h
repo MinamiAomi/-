@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <list>
 #include <memory>
 
 class ParticleManager
@@ -7,7 +8,7 @@ class ParticleManager
 
 private:
 	// パーティクル配列
-	std::vector<std::unique_ptr<class ParticleBase>> m_particles;
+	std::list<std::unique_ptr<class ParticleBase>> m_particles;
 
 public:
 	static ParticleManager* GetInstance();
@@ -16,6 +17,8 @@ public:
 	void Update();
 	void Draw();
 	void AddParticle(ParticleBase* particle);
+
+	size_t ParticleCount() const { return m_particles.size(); }
 
 private:
 	ParticleManager() = default;

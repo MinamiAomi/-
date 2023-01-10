@@ -196,3 +196,12 @@ namespace Math
 
 }
 
+namespace Color {
+
+	static const unsigned int kByteMax = 0xFF;
+
+	unsigned int Create(unsigned char r, unsigned char g, unsigned char b, unsigned char a);
+
+	unsigned int HsvaToRgba(float h, float s, float v, unsigned int a);
+
+}

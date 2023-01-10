@@ -98,6 +98,7 @@
     <ClCompile Include="C:\KamataEngine\DirectXGame\scene\GameScene.cpp" />
     <ClCompile Include="C:\KamataEngine\Adapter\Novice.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MyMath.cpp" />
     <ClCompile Include="ParticleBase.cpp" />
     <ClCompile Include="ParticleManager.cpp" />
   </ItemGroup>

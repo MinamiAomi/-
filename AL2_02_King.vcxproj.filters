@@ -47,6 +47,7 @@
     <ClCompile Include="ParticleBase.cpp">
       <Filter>Particle\Base</Filter>
     </ClCompile>
+    <ClCompile Include="MyMath.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="C:\KamataEngine\DirectXGame\audio\Audio.h">
