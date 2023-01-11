@@ -2,7 +2,7 @@
 #include "Vector2Math.h"
 #include "Matrix33.h"
 #include <math.h>
-
+#include <array>
 
 
 
@@ -164,9 +164,17 @@ namespace Math
 	/// <param name="start2">•ÏŠ·”ÍˆÍ‚ÌÅ¬</param>
 	/// <param name="end2">•ÏŠ·”ÍˆÍ‚ÌÅ‘å</param>
 	/// <returns></returns>
-	inline float Map(float value, float start1, float end1, float start2, float end2) {
-		return start2 + (end1 - start2) * ((value - start1) / (end2 - start1));
+	inline float Map(float value, float s1, float e1, float s2, float e2) {
+		return (value - s1) / (e1 - s1) * (e2 - s2) + s2;
 	}
+	//inline float Map(float value, float start1, float end1, float start2, float end2) {
+	//	return start2 + (end1 - start2) * ((value - start1) / (end2 - start1));
+	//}
+
+	inline float InvLerp(float value, float start, float end) {
+		return (value - start) / (end - start);
+	}
+
 	/// <summary>
 	/// •½•ûª
 	/// </summary>
@@ -200,8 +208,25 @@ namespace Color {
 
 	static const unsigned int kByteMax = 0xFF;
 
-	unsigned int Create(unsigned char r, unsigned char g, unsigned char b, unsigned char a);
+	inline unsigned int Create(unsigned char r, unsigned char g, unsigned char b, unsigned char a) {
+		return r << 24 | g << 16 | b << 8 | a;
+	}
 
 	unsigned int HsvaToRgba(float h, float s, float v, unsigned int a);
 
+	unsigned int Lerp(float t, unsigned int start, unsigned int end);
+
+	inline std::array<unsigned char, 4> Detach(unsigned int rgba) {
+		std::array<unsigned char, 4> result = {
+			static_cast<unsigned char>(rgba >> 24),
+			static_cast<unsigned char>(rgba >> 16),
+			static_cast<unsigned char>(rgba >> 8),
+			static_cast<unsigned char>(rgba) };
+		return result;
+	}
+
+
+	inline unsigned int Connect(const std::array<unsigned char, 4>& colors) {
+		return Create(colors[0], colors[1], colors[2], colors[3]);
+	};
 }

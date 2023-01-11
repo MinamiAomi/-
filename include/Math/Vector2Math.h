@@ -71,6 +71,7 @@ inline Vector2 Rotated(const Vector2& v, float theta) {
 inline Vector2 Lerp(float t, const Vector2& start, const Vector2& end) {
 	return start + t * (end - start);
 }
+
 	// 反射ベクトル
 	// 第二引数は壁の法線を正規化したベクトル
 inline Vector2 Reflected(const Vector2& v, const Vector2& normal) {

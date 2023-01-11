@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 // シード値
-inline void Srand() {
+inline void SrandFromTime() {
 	srand((unsigned int)time(NULL));
 }
 

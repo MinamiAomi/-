@@ -61,7 +61,15 @@ unsigned int Color::HsvaToRgba(float h, float s, float v, unsigned int a)
 	return Color::Create((unsigned int)rgba.x, (unsigned int)rgba.y, (unsigned int)rgba.z, a);
 }
 
-unsigned int Color::Create(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+unsigned int Color::Lerp(float t, unsigned int start, unsigned int end)
 {
-	return r << 24 | g << 16 | b << 8 | a;
+	auto startColors = Detach(start);
+	auto endColors = Detach(end);
+
+	unsigned char r = static_cast<unsigned char>(Math::Lerp(t, static_cast<float>(startColors[0]), static_cast<float>(endColors[0])));
+	unsigned char g = static_cast<unsigned char>(Math::Lerp(t, static_cast<float>(startColors[1]), static_cast<float>(endColors[1])));
+	unsigned char b = static_cast<unsigned char>(Math::Lerp(t, static_cast<float>(startColors[2]), static_cast<float>(endColors[2])));
+	unsigned char a = static_cast<unsigned char>(Math::Lerp(t, static_cast<float>(startColors[3]), static_cast<float>(endColors[3])));
+
+	return Create(r, g, b, a);
 }

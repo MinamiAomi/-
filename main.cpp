@@ -1,47 +1,18 @@
 ﻿#include <Novice.h>
 #include "MyMath.h"
 #include "ParticleManager.h"
-#include "ParticleBase.h"
+#include "ParticleNormal.h"
 #include "Random.h"
-
+#include "Fire.h"
+#include "Player.h"
+#include "Coin.h"
 const char kWindowTitle[] = "学籍番号";
 
-class Part : public ParticleBase {
-
-public:
-	Vector2 pos;
-	Vector2 vel;
-	float hsize = 10;
-	unsigned int handle = 0;
-	unsigned int color = WHITE;
-
-public:
-	Part() : ParticleBase() {}
-	~Part() {}
-
-	void Update() {
-		pos += vel;
-	}
-	void Draw() {
-		Novice::SetBlendMode(kBlendModeAdd);
-		int left = pos.x - hsize;
-		int top = pos.y - hsize;
-		Novice::DrawSpriteRect(left, top, hsize * 2.0f, hsize * 2.0f, 0, 0, 256, 256, handle, 0.0f, color);
-		Novice::SetBlendMode(kBlendModeNormal);
-	}
-	bool IsDelete() {
-		// 画面外
-		return 
-			pos.x < -hsize || 1280 + hsize < pos.x ||
-			pos.y < -hsize || 720 + hsize < pos.y;
-	}
-};
-
-void CreateParticle(unsigned int handle);
+#include <memory>
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
-	Srand();
+	SrandFromTime();
 	// ライブラリの初期化
 	Novice::Initialize(kWindowTitle, 1280, 720);
 
@@ -50,8 +21,25 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	char preKeys[256] = {0};
 
 	ParticleManager* particleMana = ParticleManager::GetInstance();
-		
+	Fire::Initalize();
+
+	Novice::SetClearColor(BLACK);
+
 	unsigned int particleHandle = Novice::LoadTexture("./images/Particle.png");
+	Fire fire;
+
+	fire.Position({ 640,560 });
+	fire.Radius(10);
+	fire.IsActive(true);
+
+	Player player;
+	player.Initalize();
+
+	Coin coins[30];
+	Coin::Initalize();
+
+	Vector2 mouse;
+
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
@@ -62,13 +50,32 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		memcpy(preKeys, keys, 256);
 		Novice::GetHitKeyStateAll(keys);
 
+		int x = 0, y = 0;
+		Novice::GetMousePosition(&x, &y);
+		mouse = { (float)x,(float)y };
+
 		///
 		/// ↓更新処理ここから
 		///
 
-		if (Novice::IsTriggerMouse(0)) {
-			CreateParticle(particleHandle);
+		if (Novice::IsTriggerMouse(1)) {
+
+			for (auto& it : coins) {
+				if (it.state == Coin::kInactive) {
+					it.position = mouse;
+					it.state = Coin::kActive;
+					break;
+				}
+			}
+
 		}
+		if (Novice::IsPressMouse(0)) {
+			fire.Position(mouse);
+			fire.Update();
+		}
+
+		player.Update(keys, preKeys);
+
 
 		particleMana->Update();
 
@@ -79,6 +86,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 		/// ↓描画処理ここから
 		///
+
+		Novice::DrawLine(0, 600, 1280, 600, WHITE);
+		
+		for (auto& it : coins) {
+			it.Draw();
+		}
+
+		player.Draw();
 
 		particleMana->Draw();
 
@@ -102,19 +117,4 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	return 0;
 }
 
-void CreateParticle(unsigned int handle)
-{
-	int particleCount = 10;
-	Vector2 center = { 640,360 };
-	ParticleManager* partMana = ParticleManager::GetInstance();
 
-	for (int i = 0; i < particleCount; i++) {
-		Part* particle = new Part;
-		particle->pos = Vector2{ (float)Random(-100, 100),(float)Random(-100, 100) } + center;
-		particle->vel = Rotated(VECTOR2::UnitX, Math::Lerp(Random(), 0.0f, Math::TwoPi)) * 5.0f;
-		particle->hsize = Math::Lerp(Random(), 20.0f, 50.0f);
-		particle->handle = handle;
-		particle->color = Color::HsvaToRgba(Math::Lerp(Random(), 0.0f, 360.0f), Random(), Random(), 0xFF);
-		partMana->AddParticle(particle);
-	}
-}
